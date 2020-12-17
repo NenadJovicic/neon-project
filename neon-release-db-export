@@ -1,0 +1,142 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.14 (Ubuntu 10.14-1.pgdg18.04+1)
+-- Dumped by pg_dump version 13.0 (Ubuntu 13.0-1.pgdg18.04+1)
+
+-- Started on 2020-12-17 21:40:32 CET
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 198 (class 1259 OID 25443)
+-- Name: hibernate_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.hibernate_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.hibernate_sequence OWNER TO postgres;
+
+SET default_tablespace = '';
+
+--
+-- TOC entry 196 (class 1259 OID 25430)
+-- Name: release; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.release (
+    id bigint NOT NULL,
+    created_at timestamp without time zone,
+    last_update_at timestamp without time zone,
+    description character varying(255),
+    name character varying(255),
+    release_date timestamp without time zone,
+    status_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.release OWNER TO postgres;
+
+--
+-- TOC entry 197 (class 1259 OID 25438)
+-- Name: release_status; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.release_status (
+    id bigint NOT NULL,
+    status_name character varying(255)
+);
+
+
+ALTER TABLE public.release_status OWNER TO postgres;
+
+--
+-- TOC entry 2921 (class 0 OID 25430)
+-- Dependencies: 196
+-- Data for Name: release; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.release (id, created_at, last_update_at, description, name, release_date, status_id) FROM stdin;
+1	2020-12-17 20:30:08.418	2020-12-17 20:30:08.418	first alpha release for testing	First release	2020-12-09 11:00:00	1
+2	2020-12-17 20:38:35.946	2020-12-17 20:38:35.946	second alpha release for testing	Second release	2020-12-19 11:00:00	2
+7	2020-12-17 20:41:42.425	2020-12-17 20:41:42.425	Third alpha release for testing	Third release	2020-12-19 12:00:00	5
+8	2020-12-17 20:46:49.57	2020-12-17 21:05:35.001	Fourth beta release for dev	Fourth release	2020-12-19 12:00:00	5
+\.
+
+
+--
+-- TOC entry 2922 (class 0 OID 25438)
+-- Dependencies: 197
+-- Data for Name: release_status; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.release_status (id, status_name) FROM stdin;
+1	Created
+2	In Development
+5	On DEV
+7	QA Done on DEV
+11	On staging
+13	QA done on STAGING
+16	On PROD
+21	Done
+\.
+
+
+--
+-- TOC entry 2929 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.hibernate_sequence', 9, true);
+
+
+--
+-- TOC entry 2796 (class 2606 OID 25437)
+-- Name: release release_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.release
+    ADD CONSTRAINT release_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2798 (class 2606 OID 25442)
+-- Name: release_status release_status_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.release_status
+    ADD CONSTRAINT release_status_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2799 (class 2606 OID 25445)
+-- Name: release fkqrik1raq7rgbf262jxyuy9m5f; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.release
+    ADD CONSTRAINT fkqrik1raq7rgbf262jxyuy9m5f FOREIGN KEY (status_id) REFERENCES public.release_status(id);
+
+
+-- Completed on 2020-12-17 21:40:33 CET
+
+--
+-- PostgreSQL database dump complete
+--
+
