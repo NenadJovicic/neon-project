@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.ReadOnlyProperty;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -13,7 +13,8 @@ import java.util.Date;
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
 @Entity
-public class Release extends Auditable {
+@EntityListeners(AuditingEntityListener.class)
+public class Release {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -27,4 +28,9 @@ public class Release extends Auditable {
 
     private Date releaseDate;
 
+    @CreatedDate
+    private Date createdAt;
+
+    @LastModifiedDate
+    private Date lastUpdateAt;
 }

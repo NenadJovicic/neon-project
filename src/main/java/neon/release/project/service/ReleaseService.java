@@ -44,6 +44,9 @@ public class ReleaseService {
     }
 
     public void deleteRelease(Long id) {
+        if (!this.releaseRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Release with provided id does not exist");
+        }
         this.releaseRepository.deleteById(id);
     }
 }
