@@ -3,6 +3,7 @@ package neon.release.project.service;
 import neon.release.project.entity.Release;
 import neon.release.project.repository.ReleaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -22,11 +23,21 @@ public class ReleaseService {
     }
 
     public Optional<Release> getReleaseById(Long id) {
-        return this.releaseRepository.findById(id);
+        Optional<Release> foundRelease = this.releaseRepository.findById(id);
+        if (foundRelease.isPresent()) {
+            return foundRelease;
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Release does not exist");
+        }
     }
 
     public Release createNewRelease(Release release) {
-        return this.releaseRepository.saveAndFlush(release);
+        try {
+            return this.releaseRepository.saveAndFlush(release);
+        } catch (DataIntegrityViolationException divEx) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Release status does not exist");
+        }
+
     }
 
     public Release updateRelease(Release release) {
@@ -36,7 +47,7 @@ public class ReleaseService {
             if (this.releaseRepository.existsById(release.getId())) {
                 return this.releaseRepository.saveAndFlush(release);
             } else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Release doesn't exist");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Release does not exist");
             }
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Release id required");
@@ -45,7 +56,7 @@ public class ReleaseService {
 
     public void deleteRelease(Long id) {
         if (!this.releaseRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Release with provided id does not exist");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Release does not exist");
         }
         this.releaseRepository.deleteById(id);
     }

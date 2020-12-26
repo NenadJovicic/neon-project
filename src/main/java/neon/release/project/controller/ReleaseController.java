@@ -3,10 +3,13 @@ package neon.release.project.controller;
 import neon.release.project.entity.Release;
 import neon.release.project.service.ReleaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * NOTE: Normally, Entity should not be return type of any of those routes, and I would introduce specific DTO objects
@@ -21,6 +24,22 @@ public class ReleaseController {
     @GetMapping()
     public List<Release> getReleases() {
         return this.releaseService.getReleases();
+    }
+
+    @GetMapping("/{id}")
+    public Optional<Release> getReleaseById(@PathVariable(name = "id") String id) {
+        try {
+            Long releaseId = Long.parseLong(id);
+            return this.releaseService.getReleaseById(releaseId);
+        } catch (ResponseStatusException responseEx) {
+            throw responseEx;
+        }
+        catch (NumberFormatException parseEx) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid release id");
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @PostMapping()
@@ -38,7 +57,7 @@ public class ReleaseController {
         return this.releaseService.updateRelease(release);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRelease(@PathVariable("id") Long id) {
         this.releaseService.deleteRelease(id);
